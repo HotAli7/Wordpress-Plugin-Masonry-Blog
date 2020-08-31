@@ -13,7 +13,7 @@ if ( ! defined('ABSPATH')) exit;  // if direct access
 * Custom Field For Category - color
 **/
 
-// Add new term page
+// Add new term meta to Add term page
 function my_taxonomy_add_meta_fields( $taxonomy ) { ?>
     <div class="form-field term-group">
         <label for="color">
@@ -23,7 +23,7 @@ function my_taxonomy_add_meta_fields( $taxonomy ) { ?>
 }
 add_action( 'category_add_form_fields', 'my_taxonomy_add_meta_fields', 10, 2 );
 
-// Edit term page
+// Add new term meta to Edit term page
 function my_taxonomy_edit_meta_fields( $term, $taxonomy ) {
     $color = get_term_meta( $term->term_id, 'color', true ); ?>
 
@@ -58,23 +58,44 @@ add_action( 'wp_enqueue_scripts', 'ohvo_blog_grid_enqueue_scripts' );
 if (!function_exists('ohvo_blog_grid_enqueue_scripts')) {
 	function ohvo_blog_grid_enqueue_scripts( $hook ) {
 		
-    wp_enqueue_style( 'ohvo-blog-grid-css', plugins_url( '/ohvo-blog-grid.css', __FILE__ ), array(), '', 'all' );
+    wp_enqueue_style( 
+      'ohvo-blog-grid-css', 
+      plugins_url( '/ohvo-blog-grid.css', __FILE__ ), 
+      array(), 
+      '', 
+      'all' 
+    );
 
 
-    wp_enqueue_script( 'masonry', plugins_url( '/js/masonry.pkgd.min.js', __FILE__ ) );
+    wp_enqueue_script( 
+      'masonry', 
+      plugins_url( '/js/masonry.pkgd.min.js', __FILE__ ) 
+    );
     
-    wp_register_script('ohvo-blog-grid-js', plugins_url( '/ohvo-blog-grid.js', __FILE__ ), array('masonry', 'jquery'), '', true);
+    wp_register_script(
+      'ohvo-blog-grid-js', 
+      plugins_url( '/ohvo-blog-grid.js', __FILE__ ), 
+      array('masonry', 'jquery'), 
+      '', 
+      true
+    );
 
-    wp_localize_script( 'ohvo-blog-grid-js', 'ajax_posts', array(
+    wp_localize_script( 
+      'ohvo-blog-grid-js', 
+      'ajax_posts', 
+      array(
         'ajaxurl' => admin_url( 'admin-ajax.php' ),
         'noposts' => __('No older posts found', 'ohvo'),
-    ));
+      )
+    );
     wp_enqueue_script( 'ohvo-blog-grid-js' );
-
 	}
 }
 
-
+/**
+ * Main Layout that show posts
+ * @shortcode [masonry_grid_posts]
+ */
 function ohvo_masonry_grid_posts($attr, $content) {
 
     ob_start(); 
@@ -103,6 +124,10 @@ function ohvo_masonry_grid_posts($attr, $content) {
 }
 add_shortcode( 'masonry_grid_posts', 'ohvo_masonry_grid_posts' );
 
+
+/**
+ * Get Posts and Create Post Grid using wp ajax
+ */
 function more_post_ajax() {
     header("Content-Type: text/html");
 
@@ -166,7 +191,15 @@ function more_post_ajax() {
 add_action( 'wp_ajax_nopriv_more_post_ajax', 'more_post_ajax' );
 add_action( 'wp_ajax_more_post_ajax', 'more_post_ajax' );
 
+/**
+ * Create Pagination
+ *
+ * @param   number  $current_page     number of current page.
+ * @param   number  $posts_per_page   number of posts in one page.
+ * @param   string  $category_name    name of category that should be showen.
 
+ * @return  string  HTML content.
+ */
 function misha_paginator( $current_page = 1, $posts_per_page = 14, $category_name = -1 ){
 
     if ($category_name == -1)      

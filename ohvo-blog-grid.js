@@ -1,8 +1,8 @@
 jQuery(document).ready(function (){ // use jQuery code inside this to avoid "$ is not defined" error
-    let ppp = 8; // post per page
-    let pageNumber = 0;
-    let filter = -1;
-    let category_name = -1;
+    let ppp             = 8;    // post per page
+    let pageNumber      = 0;    // number of current page
+    let filter          = -1;   // 
+    let category_name   = -1;   // name of category
 
 
     $viewAllButtons = jQuery('.ohvo-posts-grid .view-all');
@@ -13,9 +13,9 @@ jQuery(document).ready(function (){ // use jQuery code inside this to avoid "$ i
     // masonry grid
     $grid = jQuery('#ohvo-ajax-posts.grid').masonry({
         // options
-        itemSelector: '.grid-item',
-        columnWidth: '.grid-item',
-        percentPosition: true
+        itemSelector:       '.grid-item',
+        columnWidth:        '.grid-item',
+        percentPosition:    true
     });
 
     jQuery(document).on('click', '.ohvo-posts-grid nav a.page-button', function(){
@@ -32,6 +32,12 @@ jQuery(document).ready(function (){ // use jQuery code inside this to avoid "$ i
         loadPosts();
     }
 
+    /** Load Posts using wp ajax
+     * 
+     * @param number pageNumber     number of current page
+     * @param number ppp            size of page
+     * @param string category_name  name of current category. If -1 then, show all categories.
+     */
     function loadPosts() {
 
         let q = '&post_type=post' + '&paged=' + pageNumber + '&posts_per_page=' + ppp + '&column_size=3' + '&category_name=' + category_name + '&action=more_post_ajax';
